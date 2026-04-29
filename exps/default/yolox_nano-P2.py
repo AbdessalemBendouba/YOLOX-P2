@@ -31,15 +31,23 @@ class Exp(MyExp):
                     m.momentum = 0.03
         if "model" not in self.__dict__:
             from yolox.models import YOLOX, YOLOPAFPN, YOLOXHead
-            in_channels = [256, 512, 1024]
+            in_channels = [128, 256, 512, 1024]
             # NANO model use depthwise = True, which is main difference.
             backbone = YOLOPAFPN(
-                self.depth, self.width, in_channels=in_channels,
-                act=self.act, depthwise=True,
+                self.depth, 
+                self.width,
+                in_features=("dark2", "dark3", "dark4", "dark5"), 
+                in_channels=in_channels,
+                act=self.act,
+                depthwise=True,
             )
             head = YOLOXHead(
-                self.num_classes, self.width, in_channels=in_channels,
-                act=self.act, depthwise=True
+                self.num_classes,
+                self.width,
+                strides=[4, 8, 16, 32], 
+                in_channels=in_channels,
+                act=self.act,
+                depthwise=True
             )
             self.model = YOLOX(backbone, head)
 
