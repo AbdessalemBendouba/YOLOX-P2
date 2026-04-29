@@ -118,9 +118,17 @@ class Exp(BaseExp):
                     m.momentum = 0.03
 
         if getattr(self, "model", None) is None:
-            in_channels = [256, 512, 1024]
-            backbone = YOLOPAFPN(self.depth, self.width, in_channels=in_channels, act=self.act)
-            head = YOLOXHead(self.num_classes, self.width, in_channels=in_channels, act=self.act)
+            in_channels = [128, 256, 512, 1024]
+            backbone = YOLOPAFPN(self.depth,
+                                 self.width,
+                                 in_channels=in_channels,
+                                 in_features=("dark2", "dark3", "dark4", "dark5"),
+                                 act=self.act)
+            head = YOLOXHead(self.num_classes,
+                             self.width,
+                             in_channels=in_channels,
+                             strides=[4, 8, 16, 32],
+                             act=self.act)
             self.model = YOLOX(backbone, head)
 
         self.model.apply(init_yolo)
